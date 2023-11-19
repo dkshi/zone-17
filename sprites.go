@@ -6,7 +6,7 @@ import (
 )
 
 type Sprites struct {
-	collection *map[string]*ebiten.Image
+	collection map[string]*ebiten.Image
 }
 
 func NewSprites() (*Sprites, error) {
@@ -19,14 +19,19 @@ func NewSprites() (*Sprites, error) {
 	if err != nil {
 		return &Sprites{}, err
 	}
-	tile1, _, err := ebitenutil.NewImageFromFile("assets/tile1.png")
+	tile, _, err := ebitenutil.NewImageFromFile("assets/tile.png")
+	if err != nil {
+		return &Sprites{}, err
+	}
+	ceilingTop, _, err := ebitenutil.NewImageFromFile("assets/ceiling-top.png")
 	if err != nil {
 		return &Sprites{}, err
 	}
 
 	newCollection["background"] = background
 	newCollection["playerModel"] = playerModel
-	newCollection["tile1"] = tile1
+	newCollection["tile"] = tile
+	newCollection["ceiling-top"] = ceilingTop
 
-	return &Sprites{collection: &newCollection}, nil
+	return &Sprites{collection: newCollection}, nil
 }

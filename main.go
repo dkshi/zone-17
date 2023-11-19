@@ -2,76 +2,93 @@ package main
 
 import (
 	"log"
+	"math/rand"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-const (
-	jumpForce = 13
-	gravity = 4
-	jumpHeight = 30
-	bias = 5
-	screenWidth = 320
-	screenHeight = 180
-)
+var sprites *Sprites
 
-var isGrounded = true
-var isFalling = true
+const (
+	screenWidth  = 640
+	screenHeight = 360
+	playerStartPosX = 40
+	playerStartPosY = 200
+	playerWidth = 20
+	playerHeight = 31
+	tileHeightDelta = 32
+	tileHeight = 216
+	tileWidth = 354
+	spawnTileBiasX = 10
+	startTilesAmount = 2
+	startTilePosX = 0
+	startTileMidBiasX = 150
+	startTilePosY = 250
+)
 
 type Game struct {
 	world *World
+	controller *Controller
+	renderer *Renderer  
 }
 
 func NewGame(world *World) *Game {
-	return &Game{world: world}
+	return &Game{
+		world: world,
+		controller: NewController(),
+		renderer: NewRenderer(),
+	}
 }
 
 func (g *Game) Update() error {
-	g.world.player.posY += gravity 
+	g.controller.PlayerController(g)
+	g.controller.TilesController(g)
 
-	for _, tile := range *g.world.tiles {
-		if tile.isColliding(g.world.player) {
-			g.world.player.posY = tile.posY - g.world.player.model.Bounds().Dy() + bias
-			isGrounded = true
-		}
-	}
-
-	if isGrounded && ebiten.IsKeyPressed(ebiten.KeySpace) {
-		isGrounded = false
-		isFalling = false
-	}
-
-	if !isGrounded && !isFalling {
-		g.world.player.posY -= jumpForce
-	}
-
-	if g.world.player.posY <= jumpHeight {
-		isFalling = true
-	}
-
-	
 	return nil
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	g.DrawBackground(screen)
-	g.DrawTiles(screen)
-	g.DrawPlayer(screen)
+	g.renderer.DrawBackground(g, screen)
+	g.renderer.DrawTiles(g, screen)
+	g.renderer.DrawCeiling(g, screen)
+	g.renderer.DrawPlayer(g, screen)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 	return screenWidth, screenHeight
 }
 
+func CreateTile() *GameObject {
+	tilePosY := screenHeight - (rand.Intn(tileHeightDelta) + 15)
+	randSpawnBiasX := rand.Intn(spawnTileBiasX + 1) + spawnTileBiasX
+	newTile := NewGameObject(sprites.collection["tile"], screenWidth + randSpawnBiasX, tilePosY, tileWidth, tileHeight)
+	return newTile
+}
+
+func CreateStart() []*GameObject {
+	tile1 := NewGameObject(sprites.collection["tile"], startTilePosX, startTilePosY, tileWidth, tileHeight)
+	tile2 := NewGameObject(sprites.collection["tile"], tile1.width + startTileMidBiasX, startTilePosY, tileWidth, tileHeight)
+	return []*GameObject{tile1, tile2}
+}
+
+
 func main() {
-	sprites, err := NewSprites()
+	var err error
+
+	sprites, err = NewSprites()
 	if err != nil {
 		log.Fatal(err)
 	}
-	
-	tile1 := NewGameObject((*sprites.collection)["tile1"], 0, 128)
-	player := NewGameObject((*sprites.collection)["playerModel"], 41, 100)
-	world := NewWorld((*sprites.collection)["background"], player, &[]GameObject{*tile1})
+
+	player := NewGameObject(sprites.collection["playerModel"], playerStartPosX, playerStartPosY, playerWidth, playerHeight)
+
+	floor := NewFloor(CreateStart())
+
+	top := NewGameObject(sprites.collection["ceiling-top"], 0, 0, screenWidth, sprites.collection["ceiling-top"].Bounds().Dy())
+	ceiling := NewCeiling(top)
+
+	world := NewWorld(sprites.collection["background"], player, floor, ceiling)
+
 	game := NewGame(world)
 
 	ebiten.SetWindowSize(1280, 720)

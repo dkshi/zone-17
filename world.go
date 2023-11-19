@@ -5,13 +5,15 @@ import "github.com/hajimehoshi/ebiten/v2"
 type World struct {
 	background *ebiten.Image
 	player     *GameObject
-	tiles      *[]GameObject
+	floor      *Floor
+	ceiling    *Ceiling
 }
 
-func NewWorld(background *ebiten.Image, player *GameObject, tiles *[]GameObject) *World {
+func NewWorld(background *ebiten.Image, player *GameObject, floor *Floor, ceiling *Ceiling) *World {
 	return &World{
 		background: background,
 		player:     player,
-		tiles:      tiles,
+		floor:      floor,
+		ceiling:    ceiling,
 	}
 }
