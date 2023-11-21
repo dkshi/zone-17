@@ -32,6 +32,11 @@ func (c *Controller) PlayerController(g *Game) {
 
 	isGrounded = false
 
+	if g.world.player.isCollidingWithBottom(g.world.ceiling.top) {
+		g.world.player.posY = g.world.ceiling.top.posY + g.world.ceiling.top.height - biasY
+		isGrounded = true
+	}
+
 	for _, tile := range g.world.floor.tiles {
 		if g.world.player.isCollidingWithSides(tile) && !g.world.player.isCollidingWithTop(tile) {
 			isTilesMoving = false
@@ -43,6 +48,10 @@ func (c *Controller) PlayerController(g *Game) {
 			lastTileY = screenHeight - tile.posY
 			isGrounded = true
 		}
+	}
+
+	if isGrounded && inpututil.IsKeyJustPressed(ebiten.KeyG) {
+		gravity *= -1
 	}
 
 	if isGrounded && inpututil.IsKeyJustPressed(ebiten.KeySpace) {
@@ -59,7 +68,7 @@ func (c *Controller) PlayerController(g *Game) {
 	}
 }
 
-func (c *Controller) TilesController(g *Game) {
+func (c *Controller) FloorController(g *Game) {
 	tiles := g.world.floor.tiles
 	if isTilesMoving {
 		for _, tile := range tiles {
@@ -74,4 +83,8 @@ func (c *Controller) TilesController(g *Game) {
 		}
 		tiles[tilesCount-1] = CreateTile()
 	}
+}
+
+func (c *Controller) CeilingController(g *Game) {
+	
 }

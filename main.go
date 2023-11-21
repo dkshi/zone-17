@@ -42,16 +42,16 @@ func NewGame(world *World) *Game {
 
 func (g *Game) Update() error {
 	g.controller.PlayerController(g)
-	g.controller.TilesController(g)
+	g.controller.FloorController(g)
 
 	return nil
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	g.renderer.DrawBackground(g, screen)
-	g.renderer.DrawTiles(g, screen)
-	g.renderer.DrawCeiling(g, screen)
-	g.renderer.DrawPlayer(g, screen)
+	g.renderer.RenderBackground(g, screen)
+	g.renderer.RenderTiles(g, screen)
+	g.renderer.RenderCeiling(g, screen)
+	g.renderer.RenderPlayer(g, screen)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {

@@ -33,3 +33,10 @@ func (obj GameObject) isCollidingWithSides(other *GameObject) bool {
 		obj.posY < other.posY+other.height &&
 		obj.posY+obj.height > other.posY
 }
+
+func (obj GameObject) isCollidingWithBottom(other *GameObject) bool {
+	return obj.posX < other.posX+other.width &&
+		obj.posX+obj.width > other.posX &&
+		obj.posY < other.posY+other.height &&
+		obj.posY+obj.height > other.posY+other.height
+}
