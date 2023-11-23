@@ -6,10 +6,11 @@ import (
 )
 
 const (
-	jumpForce  = 5
-	jumpHeight = 120
-	biasY      = 5
-	tileSpeedX = 5
+	jumpForce   = 5
+	jumpHeight  = 120
+	biasY       = 5
+	tileSpeedX  = 5
+	gReverseInc = 5
 )
 
 var gravity = 8
@@ -51,7 +52,7 @@ func (c *Controller) PlayerController(g *Game) {
 	}
 
 	if isGrounded && inpututil.IsKeyJustPressed(ebiten.KeyG) {
-		gravity *= -1
+		gravity = (gravity * -1) - gReverseInc
 	}
 
 	if isGrounded && inpututil.IsKeyJustPressed(ebiten.KeySpace) {
@@ -86,5 +87,5 @@ func (c *Controller) FloorController(g *Game) {
 }
 
 func (c *Controller) CeilingController(g *Game) {
-	
+
 }
