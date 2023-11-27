@@ -27,11 +27,16 @@ func NewSprites() (*Sprites, error) {
 	if err != nil {
 		return &Sprites{}, err
 	}
+	lamp, _, err := ebitenutil.NewImageFromFile("assets/lamp.png")
+	if err != nil {
+		return &Sprites{}, err
+	}
 
 	newCollection["background"] = background
 	newCollection["playerModel"] = playerModel
 	newCollection["tile"] = tile
 	newCollection["ceiling-top"] = ceilingTop
+	newCollection["lamp"] = lamp
 
 	return &Sprites{collection: newCollection}, nil
 }

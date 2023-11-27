@@ -3,7 +3,6 @@ package main
 import "github.com/hajimehoshi/ebiten/v2"
 
 type Renderer struct {
-
 }
 
 func NewRenderer() *Renderer {
@@ -23,9 +22,16 @@ func (r *Renderer) RenderPlayer(g *Game, screen *ebiten.Image) {
 }
 
 func (r *Renderer) RenderCeiling(g *Game, screen *ebiten.Image) {
-	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Translate(float64(g.world.ceiling.top.posX), float64(g.world.ceiling.top.posY))
-	screen.DrawImage(g.world.ceiling.top.model, op)
+	opTop := &ebiten.DrawImageOptions{}
+	opTop.GeoM.Translate(float64(g.world.ceiling.top.posX), float64(g.world.ceiling.top.posY))
+	screen.DrawImage(g.world.ceiling.top.model, opTop)
+
+	for _, lamp := range g.world.ceiling.lamps {
+		opLamp := &ebiten.DrawImageOptions{}
+		opLamp.GeoM.Translate(float64(lamp.posX), float64(lamp.posY))
+		screen.DrawImage(lamp.model, opLamp)
+	}
+
 }
 
 func (r *Renderer) RenderTiles(g *Game, screen *ebiten.Image) {

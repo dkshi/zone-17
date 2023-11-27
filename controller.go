@@ -10,11 +10,13 @@ const (
 	jumpHeight  = 120
 	biasY       = 5
 	tileSpeedX  = 5
+	lampSpeedX  = 5
 	gReverseInc = 5
 )
 
 var gravity = 8
 var isTilesMoving = true
+var isLampsMoving = true
 var isFalling = false
 var isGrounded = false
 var lastTileY = 0
@@ -41,6 +43,7 @@ func (c *Controller) PlayerController(g *Game) {
 	for _, tile := range g.world.floor.tiles {
 		if g.world.player.isCollidingWithSides(tile) && !g.world.player.isCollidingWithTop(tile) {
 			isTilesMoving = false
+			isLampsMoving = false
 			break
 		}
 
@@ -87,5 +90,18 @@ func (c *Controller) FloorController(g *Game) {
 }
 
 func (c *Controller) CeilingController(g *Game) {
+	lamps := g.world.ceiling.lamps
+	if isLampsMoving {
+		for _, lamp := range lamps {
+			lamp.posX -= lampSpeedX
+		}
+	}
 
+	if lamps[0].posX <= -lamps[0].width {
+		lampsCount := len(g.world.ceiling.lamps)
+		for i := 0; i < lampsCount-1; i++ {
+			lamps[i] = lamps[i+1]
+		}
+		lamps[lampsCount-1] = CreateLamp()
+	}
 }
