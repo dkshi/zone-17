@@ -1,8 +1,8 @@
-module zone-go
+module github.com/dkshi/zone-17
 
 go 1.21.4
 
-require github.com/hajimehoshi/ebiten/v2 v2.6.2
+require github.com/hajimehoshi/ebiten/v2 v2.6.3
 
 require (
 	github.com/ebitengine/purego v0.5.0 // indirect

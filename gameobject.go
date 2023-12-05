@@ -1,42 +1,42 @@
-package main
+package zone17
 
 import "github.com/hajimehoshi/ebiten/v2"
 
 type GameObject struct {
-	model  *ebiten.Image
-	posX   int
-	posY   int
-	width  int
-	height int
+	Model  *ebiten.Image
+	PosX   int
+	PosY   int
+	Width  int
+	Height int
 }
 
 func NewGameObject(model *ebiten.Image, posX, posY, width, height int) *GameObject {
 	return &GameObject{
-		model:  model,
-		posX:   posX,
-		posY:   posY,
-		width:  width,
-		height: height,
+		Model:  model,
+		PosX:   posX,
+		PosY:   posY,
+		Width:  width,
+		Height: height,
 	}
 }
 
-func (obj GameObject) isCollidingWithTop(other *GameObject) bool {
-	return obj.posX < other.posX+other.width &&
-		obj.posX+obj.width > other.posX &&
-		obj.posY < other.posY &&
-		obj.posY+obj.height > other.posY
+func (obj GameObject) CollidingWithTop(other *GameObject) bool {
+	return obj.PosX < other.PosX+other.Width &&
+		obj.PosX+obj.Width > other.PosX &&
+		obj.PosY < other.PosY &&
+		obj.PosY+obj.Height > other.PosY
 }
 
-func (obj GameObject) isCollidingWithSides(other *GameObject) bool {
-	return obj.posX < other.posX+other.width &&
-		obj.posX+obj.width > other.posX &&
-		obj.posY < other.posY+other.height &&
-		obj.posY+obj.height > other.posY
+func (obj GameObject) CollidingWithSides(other *GameObject) bool {
+	return obj.PosX < other.PosX+other.Width &&
+		obj.PosX+obj.Width > other.PosX &&
+		obj.PosY < other.PosY+other.Height &&
+		obj.PosY+obj.Height > other.PosY
 }
 
-func (obj GameObject) isCollidingWithBottom(other *GameObject) bool {
-	return obj.posX < other.posX+other.width &&
-		obj.posX+obj.width > other.posX &&
-		obj.posY < other.posY+other.height &&
-		obj.posY+obj.height > other.posY+other.height
+func (obj GameObject) CollidingWithBottom(other *GameObject) bool {
+	return obj.PosX < other.PosX+other.Width &&
+		obj.PosX+obj.Width > other.PosX &&
+		obj.PosY < other.PosY+other.Height &&
+		obj.PosY+obj.Height > other.PosY+other.Height
 }

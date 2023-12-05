@@ -1,4 +1,4 @@
-package main
+package zone17
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
@@ -6,7 +6,7 @@ import (
 )
 
 type Sprites struct {
-	collection map[string]*ebiten.Image
+	Collection map[string]*ebiten.Image
 }
 
 func NewSprites() (*Sprites, error) {
@@ -38,5 +38,5 @@ func NewSprites() (*Sprites, error) {
 	newCollection["ceiling-top"] = ceilingTop
 	newCollection["lamp"] = lamp
 
-	return &Sprites{collection: newCollection}, nil
+	return &Sprites{Collection: newCollection}, nil
 }
