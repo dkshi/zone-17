@@ -5,8 +5,8 @@ import (
 
 	zone17 "github.com/dkshi/zone-17"
 	"github.com/dkshi/zone-17/internal/game"
+	"github.com/dkshi/zone-17/internal/mainscene"
 	"github.com/dkshi/zone-17/internal/surroudings"
-	"github.com/dkshi/zone-17/internal/world"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -34,9 +34,9 @@ func main() {
 	floor := surroudings.InitFloor(sprites)
 	ceiling := surroudings.InitCeiling(sprites)
 
-	world := world.NewWorld(sprites.Collection["background"], player, floor, ceiling)
+	mainSceneWorld := mainscene.NewMainSceneWorld(sprites.Collection["background"], player, floor, ceiling, sprites)
 
-	game := game.NewGame(world, sprites)
+	game := game.NewGame(mainscene.NewMainScene(mainscene.NewMainSceneRenderer(mainSceneWorld), mainscene.NewMainSceneController(mainSceneWorld)))
 
 	ebiten.SetWindowSize(1280, 720)
 	ebiten.SetWindowTitle("Zone 17")

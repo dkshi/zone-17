@@ -2,7 +2,6 @@ package game
 
 import (
 	zone17 "github.com/dkshi/zone-17"
-	"github.com/dkshi/zone-17/internal/world"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -12,34 +11,23 @@ const (
 )
 
 type Game struct {
-	World      *world.World
-	Controller *Controller
-	Renderer   *Renderer
-	Sprites    *zone17.Sprites
+	Sprites       *zone17.Sprites
+	SceneOnScreen zone17.GameScene
 }
 
-func NewGame(world *world.World, sprites *zone17.Sprites) *Game {
+func NewGame(sceneOnScreen zone17.GameScene) *Game {
 	return &Game{
-		World:      world,
-		Controller: NewController(),
-		Renderer:   NewRenderer(),
-		Sprites: sprites,
+		SceneOnScreen: sceneOnScreen,
 	}
 }
 
 func (g *Game) Update() error {
-	g.Controller.PlayerController(g)
-	g.Controller.FloorController(g)
-	g.Controller.CeilingController(g)
-
+	g.SceneOnScreen.Update()
 	return nil
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	g.Renderer.RenderBackground(g, screen)
-	g.Renderer.RenderTiles(g, screen)
-	g.Renderer.RenderCeiling(g, screen)
-	g.Renderer.RenderPlayer(g, screen)
+	g.SceneOnScreen.Draw(screen)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
