@@ -8,7 +8,7 @@ import (
 
 var (
 	tileHeightDelta   = 32
-	tileHeight        = 216
+	tileHeight        = 500
 	tileWidth         = 354
 	spawnTileBiasX    = 10
 	startTilesAmount  = 2

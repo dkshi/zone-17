@@ -7,19 +7,20 @@ import (
 )
 
 type MainSceneWorld struct {
-	Background *ebiten.Image
-	Player     *zone17.GameObject
-	Floor      *surroudings.Floor
-	Ceiling    *surroudings.Ceiling
-	Sprites    *zone17.Sprites
+	background *ebiten.Image
+	player     *zone17.GameObject
+	floor      *surroudings.Floor
+	ceiling    *surroudings.Ceiling
+	sprites    *zone17.Sprites
+	points     uint64
 }
 
 func NewMainSceneWorld(background *ebiten.Image, player *zone17.GameObject, floor *surroudings.Floor, ceiling *surroudings.Ceiling, sprites *zone17.Sprites) *MainSceneWorld {
 	return &MainSceneWorld{
-		Background: background,
-		Player:     player,
-		Floor:      floor,
-		Ceiling:    ceiling,
-		Sprites:    sprites,
+		background: background,
+		player:     player,
+		floor:      floor,
+		ceiling:    ceiling,
+		sprites:    sprites,
 	}
 }

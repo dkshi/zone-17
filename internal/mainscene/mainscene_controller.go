@@ -7,23 +7,24 @@ import (
 )
 
 const (
-	screenWidth     = 640
-	screenHeight    = 360
-	jumpForce   = 5
-	jumpHeight  = 120
-	biasY       = 5
-	tileSpeedX  = 5
-	lampSpeedX  = 5
-	gReverseInc = 5
+	screenWidth  = 640
+	screenHeight = 360
+	jumpForce    = 5
+	jumpHeight   = 120
+	biasY        = 5
+	tileSpeedX   = 5
+	lampSpeedX   = 5
+	gReverseInc  = 5
+	playerSpeed  = 10
 )
 
 var (
-	gravity       = 8
-	isTilesMoving = true
-	isLampsMoving = true
-	isFalling     = false
-	isGrounded    = false
-	lastTileY     = 0
+	gravity     = 8
+	isMoving    = true
+	isFalling   = false
+	isGrounded  = false
+	lastTileY   = 0
+	tickCounter = 0
 )
 
 type MainSceneController struct {
@@ -36,29 +37,43 @@ func NewMainSceneController(world *MainSceneWorld) *MainSceneController {
 	}
 }
 
+func (c *MainSceneController) TickController() {
+	tickCounter++
+}
+
 func (c *MainSceneController) PlayerController() {
+	if isMoving && tickCounter%playerSpeed == 0 {
+		c.world.points++
+	}
+
 	if isFalling {
-		c.world.Player.PosY += gravity
+		c.world.player.PosY += gravity
 	}
 
 	isGrounded = false
 
-	if c.world.Player.CollidingWithBottom(c.world.Ceiling.Top) {
-		c.world.Player.PosY = c.world.Ceiling.Top.PosY + c.world.Ceiling.Top.Height - biasY
+	if c.world.player.CollidingWithBottom(c.world.ceiling.Top) {
+		c.world.player.PosY = c.world.ceiling.Top.PosY + c.world.ceiling.Top.Height - biasY
 		isGrounded = true
 	}
 
-	for _, tile := range c.world.Floor.Tiles {
-		if c.world.Player.CollidingWithSides(tile) && !c.world.Player.CollidingWithTop(tile) {
-			isTilesMoving = false
-			isLampsMoving = false
+	for _, tile := range c.world.floor.Tiles {
+		if c.world.player.CollidingWithSides(tile) && !c.world.player.CollidingWithTop(tile) {
+			isMoving = false
 			break
 		}
 
-		if c.world.Player.CollidingWithTop(tile) {
-			c.world.Player.PosY = tile.PosY - c.world.Player.Height + biasY
+		if c.world.player.CollidingWithTop(tile) {
+			c.world.player.PosY = tile.PosY - c.world.player.Height + biasY
 			lastTileY = screenHeight - tile.PosY
 			isGrounded = true
+		}
+	}
+
+	for _, lamp := range c.world.ceiling.Lamps {
+		if c.world.player.CollidingWithBottom(lamp) || c.world.player.CollidingWithSides(lamp) {
+			isMoving = false
+			break
 		}
 	}
 
@@ -72,44 +87,44 @@ func (c *MainSceneController) PlayerController() {
 	}
 
 	if !isGrounded && !isFalling {
-		c.world.Player.PosY -= jumpForce
+		c.world.player.PosY -= jumpForce
 	}
 
-	if c.world.Player.PosY < screenHeight-(lastTileY+jumpHeight) && !isGrounded {
+	if c.world.player.PosY < screenHeight-(lastTileY+jumpHeight) && !isGrounded {
 		isFalling = true
 	}
 }
 
 func (c *MainSceneController) FloorController() {
-	tiles := c.world.Floor.Tiles
-	if isTilesMoving {
+	tiles := c.world.floor.Tiles
+	if isMoving {
 		for _, tile := range tiles {
 			tile.PosX -= tileSpeedX
 		}
 	}
 
 	if tiles[0].PosX <= -tiles[0].Width {
-		tilesCount := len(c.world.Floor.Tiles)
+		tilesCount := len(c.world.floor.Tiles)
 		for i := 0; i < tilesCount-1; i++ {
 			tiles[i] = tiles[i+1]
 		}
-		tiles[tilesCount-1] = surroudings.CreateTile(c.world.Sprites)
+		tiles[tilesCount-1] = surroudings.CreateTile(c.world.sprites)
 	}
 }
 
 func (c *MainSceneController) CeilingController() {
-	lamps := c.world.Ceiling.Lamps
-	if isLampsMoving {
+	lamps := c.world.ceiling.Lamps
+	if isMoving {
 		for _, lamp := range lamps {
 			lamp.PosX -= lampSpeedX
 		}
 	}
 
 	if lamps[0].PosX <= -lamps[0].Width {
-		lampsCount := len(c.world.Ceiling.Lamps)
+		lampsCount := len(c.world.ceiling.Lamps)
 		for i := 0; i < lampsCount-1; i++ {
 			lamps[i] = lamps[i+1]
 		}
-		lamps[lampsCount-1] = surroudings.CreateLamp(c.world.Sprites)
+		lamps[lampsCount-1] = surroudings.CreateLamp(c.world.sprites)
 	}
 }
