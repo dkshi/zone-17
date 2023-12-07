@@ -2,7 +2,7 @@ package game
 
 import (
 	zone17 "github.com/dkshi/zone-17"
-	"github.com/dkshi/zone-17/internal/mainscene"
+	"github.com/dkshi/zone-17/internal/scenes/mainscene"
 	"github.com/hajimehoshi/ebiten/examples/resources/fonts"
 	"github.com/hajimehoshi/ebiten/v2"
 	"golang.org/x/image/font"
@@ -24,8 +24,9 @@ const (
 )
 
 type Game struct {
-	Sprites       *zone17.Sprites
-	SceneOnScreen zone17.GameScene
+	Sprites  *zone17.Sprites
+	Scenes   []zone17.GameScene
+	SceneKey int
 }
 
 func InitGame() (*Game, error) {
@@ -62,24 +63,27 @@ func InitGame() (*Game, error) {
 		return &Game{}, err
 	}
 
-	return NewGame(mainScene, sprites), nil
+	// Main menu scene
+
+	return NewGame([]zone17.GameScene{mainScene}, sprites, 0), nil
 
 }
 
-func NewGame(sceneOnScreen zone17.GameScene, sprites *zone17.Sprites) *Game {
+func NewGame(scenes []zone17.GameScene, sprites *zone17.Sprites, sceneKey int) *Game {
 	return &Game{
-		SceneOnScreen: sceneOnScreen,
-		Sprites:       sprites,
+		Scenes:   scenes,
+		Sprites:  sprites,
+		SceneKey: sceneKey,
 	}
 }
 
 func (g *Game) Update() error {
-	g.SceneOnScreen.Update()
+	g.Scenes[g.SceneKey].Update()
 	return nil
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	g.SceneOnScreen.Draw(screen)
+	g.Scenes[g.SceneKey].Draw(screen)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
