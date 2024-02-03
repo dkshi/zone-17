@@ -44,6 +44,7 @@ func (c *MainSceneController) TickController() {
 func (c *MainSceneController) PlayerController() {
 	if isMoving && tickCounter%playerSpeed == 0 {
 		c.world.points++
+		
 	}
 
 	if isFalling {
